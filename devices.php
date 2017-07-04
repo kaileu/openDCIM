@@ -117,6 +117,20 @@
 		echo json_encode($path);
 		exit;
 	}
+	if(isset($_GET['pathLabel'])){
+                $path=DevicePorts::followPathToEndPoint($_GET['DeviceID'], $_GET['Port']);
+
+                foreach($path as $port){
+                       $dev->DeviceID=$port->DeviceID;
+                       $dev->GetDevice();
+                       $port->DeviceName=$dev->Label;
+                }
+                //$path=$path.'test';
+                header('Location: printlabel.php?path='.json_encode($path));
+		//echo json_encode($path);
+                //exit;
+		
+        }							   
 
 	// This will allow any jackass to certify an audit but the function is hidden and 
 	// this is the type of function that will be fixed with the API so i'm not fixing it
@@ -2364,6 +2378,7 @@ $connectioncontrols.=($dev->DeviceID>0 && !empty($portList))?'
 		if($dev->DeviceType=='Switch'){print "\t\t\t\t<div id=\"st\">".__("Status")."</div>";}
 		print "\t\t\t\t<div id=\"mt\">".__("Media Type")."</div>
 			<div id=\"cc\">".__("Color Code")."</div>
+			<div id=\"pl\">Download_Label</div>						  
 			</div>\n";
 
 		foreach($portList as $i => $port){
@@ -2403,6 +2418,7 @@ $connectioncontrols.=($dev->DeviceID>0 && !empty($portList))?'
 			if($dev->DeviceType=='Switch'){print "\t\t\t\t<div id=\"st$i\"><span class=\"ui-icon status {$linkList[$i]}\"></span></div>";}
 			print "\t\t\t\t<div id=\"mt$i\" data-default=$port->MediaID>$mt</div>
 					<div id=\"cc$i\" data-default=$port->ColorID>$cc</div>
+					<div id=\"xdlabel$i\" data-default='test'><a href=\"devices.php?DeviceID=$port->DeviceID&Port=$i&pathLabel=1\">Download</a></div>																												  
 				</div>\n";
 		}
 		echo "			</div><!-- END div.table -->\n		  </div>\n		</div>";
